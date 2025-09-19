@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "generador_primos.c"
+
+
+typedef struct Nodo {
+    char* mensaje;
+    int id;
+    struct Nodo* ant;
+    struct Nodo* sig;
+} Nodo;
+
+typedef struct Blockchain {
+    Nodo* primerN;
+    Nodo* ultimoN;
+    struct Blockchain* sig;
+} Blockchain;
+
+typedef struct Federada {
+    Blockchain** arreglo;
+    int cantB;
+    int* hojas;
+    int raiz;
+} Federada;
+
+Nodo* crear_nodo(char* msj, int id);
+Blockchain* crear_b();
+void insertNodo (Blockchain* b, Nodo* n);
+Nodo* buscarNodo(Blockchain* b, int id);
+void liberarMemBlockchain(Blockchain* b); 
+
+Federada* crear_f(int cant);
+void insertBlockchain(Federada* f, Blockchain* b);
+void liberarMemFed(Federada* f);
+
+void alta(Federada* f, int idNodo, int posBc, char* msj);
+void actualizar(Blockchain* b, Nodo* n, char* msj; );
+int validar(Federada* f);
+int validar_subconjuto(Federada* f, int n, int max, int min);
