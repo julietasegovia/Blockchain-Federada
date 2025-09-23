@@ -74,9 +74,9 @@ Federada* crear_f(int cant) {
 
     if (!f) return NULL;
 
-    f->arreglo = malloc(cant, sizeof(Blockchain*));
+    f->arreglo = malloc(sizeof(Blockchain*) * cant);
     f->cantB = cant;
-    f->hojas = malloc(cant, sizeof(int));
+    f->hojas = malloc(cant * sizeof(int));
     f->raiz = -1;
 
     return f;
@@ -143,8 +143,8 @@ void actualizar(Blockchain* b, Nodo* n, char* msj, Federada* f) {
     int i = 0;
     while (actual) {
         actual->id = lista[i];
-        f->hoja[i] = actual->id;
-        f->raiz *= f->hoja[i];
+        f->hojas[i] = actual->id;
+        f->raiz *= f->hojas[i];
         i++;
         actual = actual->sig;
     }
@@ -159,8 +159,18 @@ int validar(Federada *fed){
     if(!fed->arreglo && !fed->raiz)
         return 1;
 
-    for(int i = 0; i < fed->cantB; i++)
+    for(int i = 0; i < fed->cantB; i++){
         producto *= fed->arreglo[i]->ultimoN->id;
+
+        Nodo *actual = fed->arreglo[i]->primerN;
+        while(actual->sig){
+
+            if(actual->id > actual->sig->id) //si no se cumple la condicion de orden, devuelve falso
+                return 0;
+            
+                actual = actual->sig;
+        }
+    }
 
     if(producto == fed->raiz)
         return 1;
