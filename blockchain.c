@@ -2,85 +2,107 @@
 
 Nodo* crear_nodo(char* msj, int id) {
     Nodo* n = malloc(sizeof(Nodo));
+
     if (!n) return NULL;
-    n->mensaje = strdup(msj); // reserva memoria y copia
+
+    n->mensaje = strdup(msj);
     n->id = id;
     n->ant = NULL;
     n->sig = NULL;
+
     return n;
 }
 
 Blockchain* crear_b() {
     Blockchain* b = malloc(sizeof(Blockchain));
+
     if (!b) return NULL;
+
     b->primerN = NULL;
     b->ultimoN = NULL;
     b->sig = NULL;
+
     return b;
 }
 
 void insertNodo(Blockchain* b, Nodo* n) {
     if (!b || !n) return;
+
     if (b->primerN == NULL) {
         b->primerN = n;
         b->ultimoN = n;
+
     } else {
         n->ant = b->ultimoN;
         b->ultimoN->sig = n;
         b->ultimoN = n;
+
     }
 }
 
 Nodo* buscarNodo(Blockchain* b, int id) {
     if (!b) return NULL;
+
     Nodo* act = b->primerN;
+
     while (act != NULL) {
         if (act->id == id)
             return act;
         act = act->sig;
     }
+
     return NULL;
 }
 
 void liberarMemBlockchain(Blockchain* b) {
     if (!b) return;
+
     Nodo* momentaneo = b->primerN;
+
     while (momentaneo != NULL) {
         Nodo* liberar = momentaneo;
         momentaneo = momentaneo->sig;
         free(liberar->mensaje);
         free(liberar);
     }
+
     free(b);
 }
 
 Federada* crear_f(int cant) {
     Federada* f = malloc(sizeof(Federada));
+
     if (!f) return NULL;
-    f->arreglo = calloc(cant, sizeof(Blockchain*));
+
+    f->arreglo = malloc(cant, sizeof(Blockchain*));
     f->cantB = cant;
-    f->hojas = calloc(cant, sizeof(int));
+    f->hojas = malloc(cant, sizeof(int));
     f->raiz = -1;
+
     return f;
 }
 
 void insertBlockchain(Federada* f, Blockchain* b) {
     if (!f || !b) return;
+
     for (int i = 0; i < f->cantB; i++) {
         if (f->arreglo[i] == NULL) {
             f->arreglo[i] = b;
             return;
         }
     }
+
 }
 
 void liberarMemFed(Federada* f) {
     if (!f) return;
+
     for (int i = 0; i < f->cantB; i++) {
         if (f->arreglo[i] != NULL) {
             liberarMemBlockchain(f->arreglo[i]);
         }
     }
+
     free(f->hojas);
     free(f->arreglo);
     free(f);
@@ -102,30 +124,31 @@ void alta(Federada* f, int idNodo, int posB, char* msj) {
     f->raiz = raiz;
 }
 
-void actualizar(Blockchain* b, Nodo* n, char* msj) {
+void actualizar(Blockchain* b, Nodo* n, char* msj, Federada* f) {
     if (!b || !n) return;
 
     int contador = 0;
-    Nodo* actual = b->primerN;
+    Nodo* actual = n;
     while (actual) {
         contador++;
         actual = actual->sig;
     }
 
     int* lista = primos(contador + 10);
+
+    if (n->mensaje) free(n->mensaje);  
+    n->mensaje = strdup(msj);
+
+    actual = n;
     int i = 0;
-    actual = b->primerN;
-    while (actual && actual != n) {
+    while (actual) {
+        actual->id = lista[i];
+        f->hoja[i] = actual->id;
+        f->raiz *= f->hoja[i];
         i++;
         actual = actual->sig;
     }
 
-    while (actual) {
-        actual->mensaje = strdup(msj);
-        actual->id = lista[i];
-        i++;
-        actual = actual->sig;
-    }
 
     free(lista);
 }

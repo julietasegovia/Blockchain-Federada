@@ -37,7 +37,7 @@ void insertBlockchain(Federada* f, Blockchain* b);
 void liberarMemFed(Federada* f);
 
 void alta(Federada*, int idN, int, char*);
-void actualizar(Blockchain*, Nodo*, char*);
+void actualizar(Blockchain*, Nodo*, char*, Federada*);
 int validar(Federada*);
 int validar_subconjuto(Federada*, int n, int max, int min);
 
