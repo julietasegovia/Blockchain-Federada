@@ -1,7 +1,10 @@
+#ifndef BLOCKCHAIN_H
+#define BLOCKCHAIN_H
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "generador_primos.c"
-
 
 typedef struct Nodo {
     char* mensaje;
@@ -34,6 +37,8 @@ void insertBlockchain(Federada* f, Blockchain* b);
 void liberarMemFed(Federada* f);
 
 void alta(Federada* f, int idNodo, int posBc, char* msj);
-void actualizar(Blockchain* b, Nodo* n, char* msj; );
+void actualizar(Blockchain* b, Nodo* n, char* msj);
 int validar(Federada* f);
 int validar_subconjuto(Federada* f, int n, int max, int min);
+
+#endif
