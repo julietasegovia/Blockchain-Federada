@@ -59,7 +59,7 @@ Federada* crear_f(int cant) {
     if (!f) return NULL;
     f->arreglo = calloc(cant, sizeof(Blockchain*));
     f->cantB = cant;
-    f->hojas = calloc(cant, sizeof(int)); // si no lo usas, podrías inicializar en NULL
+    f->hojas = calloc(cant, sizeof(int));
     f->raiz = -1;
     return f;
 }
@@ -72,7 +72,6 @@ void insertBlockchain(Federada* f, Blockchain* b) {
             return;
         }
     }
-    // Si está lleno, no inserta nada
 }
 
 void liberarMemFed(Federada* f) {
@@ -85,4 +84,48 @@ void liberarMemFed(Federada* f) {
     free(f->hojas);
     free(f->arreglo);
     free(f);
+}
+
+
+void alta(Federada* f, int idNodo, int posB, char* msj) {
+    if (!f || posB < 0 || posB >= f->cantB) return;
+
+    Blockchain* b = f->arreglo[posB];
+    Nodo* n = crear_nodo(msj, idNodo);
+    insertNodo(b, n);
+
+    f->hojas[posB] = b->ultimoN->id;
+    int raiz = 1;
+    for (int i = 0; i < f->cantB; i++) {
+        if (f->hojas[i] > 0) raiz *= f->hojas[i];
+    }
+    f->raiz = raiz;
+}
+
+void actualizar(Blockchain* b, Nodo* n, char* msj) {
+    if (!b || !n) return;
+
+    int contador = 0;
+    Nodo* actual = b->primerN;
+    while (actual) {
+        contador++;
+        actual = actual->sig;
+    }
+
+    int* lista = primos(contador + 10);
+    int i = 0;
+    actual = b->primerN;
+    while (actual && actual != n) {
+        i++;
+        actual = actual->sig;
+    }
+
+    while (actual) {
+        actual->mensaje = strdup(msj);
+        actual->id = lista[i];
+        i++;
+        actual = actual->sig;
+    }
+
+    free(lista);
 }
