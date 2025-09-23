@@ -152,3 +152,18 @@ void actualizar(Blockchain* b, Nodo* n, char* msj, Federada* f) {
 
     free(lista);
 }
+
+int validar(Federada *fed){
+    int producto;
+
+    if(!fed->arreglo && !fed->raiz)
+        return 1;
+
+    for(int i = 0; i < fed->cantB; i++)
+        producto *= fed->arreglo[i]->ultimoN->id;
+
+    if(producto == fed->raiz)
+        return 1;
+
+    return 0;
+}
