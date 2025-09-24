@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "generador_primos.c"
+#include "generador_primos.h"
 
 typedef struct Nodo {
     char* mensaje;
@@ -39,6 +39,6 @@ void liberarMemFed(Federada* f);
 void alta(Federada*, int idN, int, char*);
 void actualizar(Blockchain*, Nodo*, char*, Federada*);
 int validar(Federada*);
-int validar_subconjuto(Federada*, int n, int max, int min);
+int validar_subconjunto(Federada*, int n, int max, int min);
 
 #endif

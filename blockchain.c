@@ -154,7 +154,7 @@ void actualizar(Blockchain* b, Nodo* n, char* msj, Federada* f) {
 }
 
 int validar(Federada *fed){
-    int producto;
+    int producto = 1;
 
     if(!fed->arreglo && !fed->raiz)
         return 1;
@@ -176,4 +176,17 @@ int validar(Federada *fed){
         return 1;
 
     return 0;
+}
+
+int validar_subconjunto(Federada *fed, int expect, int min, int max){
+    int producto = 1;
+
+    for(int i = min; i < max; i++){
+        if(!fed->arreglo || !fed->arreglo[i]->ultimoN)
+        return 0;
+
+        producto *= fed->arreglo[i]->ultimoN->id;
+    }
+
+    return (producto == expect) ? 1 : 0;
 }
