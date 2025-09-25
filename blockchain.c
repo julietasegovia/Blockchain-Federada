@@ -1,6 +1,7 @@
 #include "blockchain.h"
 
 Nodo* crear_nodo(char* msj, int id) {
+
     Nodo* n = malloc(sizeof(Nodo));
 
     if (!n) return NULL;
@@ -109,8 +110,12 @@ void liberarMemFed(Federada* f) {
 }
 
 
-void alta(Federada* f, int idNodo, int posB, char* msj) {
+void alta(Federada* f, int *nro_nodo, int posB, char* msj) {
+    
     if (!f || posB < 0 || posB >= f->cantB) return;
+    
+    int *ids = primos(*nro_nodo);
+    int idNodo = ids[*nro_nodo - 1];
 
     Blockchain* b = f->arreglo[posB];
     Nodo* n = crear_nodo(msj, idNodo);
@@ -122,35 +127,43 @@ void alta(Federada* f, int idNodo, int posB, char* msj) {
         if (f->hojas[i] > 0) raiz *= f->hojas[i];
     }
     f->raiz = raiz;
+
+    (*nro_nodo) ++;
 }
 
-void actualizar(Blockchain* b, Nodo* n, char* msj, Federada* f) {
-    if (!b || !n) return;
+void actualizar(Federada* f, int id_bloc, int id_viejo, char* msj, int* nro_nodo) {
+    if (!f || id_bloc < 0 || id_bloc >= f->cantB || id_viejo <= 0 || !nro_nodo) 
+        return;
+    
+    Blockchain *b = f->arreglo[id_bloc];
+    if (!b) return;
 
-    int contador = 0;
-    Nodo* actual = n;
-    while (actual) {
-        contador++;
+    Nodo *actual = b->primerN;
+    int empezar_actualizar = 0;
+    while(actual){
+        if(actual->id == id_viejo)
+            empezar_actualizar = 1;
+        
+        if(empezar_actualizar) {
+            if(actual->id == id_viejo)
+                actual->mensaje = msj;
+            
+            int *nuevos_ids = primos(*nro_nodo);
+            actual->id = nuevos_ids[*nro_nodo - 1];
+            free(nuevos_ids);
+            (*nro_nodo)++;
+        }
         actual = actual->sig;
     }
 
-    int* lista = primos(contador + 10);
+    f->hojas[id_bloc] = b->ultimoN->id;
+    actual = b->primerN;
+    f->raiz = 1;
+    for(int i = 0; i < f->cantB; i++)
+        if (f->arreglo[i] && f->arreglo[i]->ultimoN) {
+            f->raiz *= f->hojas[i];
+        }
 
-    if (n->mensaje) free(n->mensaje);  
-    n->mensaje = strdup(msj);
-
-    actual = n;
-    int i = 0;
-    while (actual) {
-        actual->id = lista[i];
-        f->hojas[i] = actual->id;
-        f->raiz *= f->hojas[i];
-        i++;
-        actual = actual->sig;
-    }
-
-
-    free(lista);
 }
 
 int validar(Federada *fed){
@@ -179,13 +192,15 @@ int validar(Federada *fed){
 }
 
 int validar_subconjunto(Federada *fed, int expect, int min, int max){
+    if (!fed || min < 0 || max >= fed->cantB || min > max) return 0;
+    
     int producto = 1;
 
-    for(int i = min; i < max; i++){
-        if(!fed->arreglo || !fed->arreglo[i]->ultimoN)
-        return 0;
+    for(int i = min; i <= max; i++){
+        if(!fed->arreglo || !fed->arreglo[i] || !fed->arreglo[i]->ultimoN)
+            return 0;
 
-        producto *= fed->arreglo[i]->ultimoN->id;
+        producto *= fed->hojas[i];
     }
 
     return (producto == expect) ? 1 : 0;

@@ -26,7 +26,7 @@ typedef struct Federada {
     int raiz;
 } Federada;
 
-Nodo* crear_nodo(char* msj, int id);
+Nodo* crear_nodo(char* msj, int nro_nodo);
 Blockchain* crear_b();
 void insertNodo (Blockchain* b, Nodo* n);
 Nodo* buscarNodo(Blockchain* b, int id);
@@ -36,8 +36,8 @@ Federada* crear_f(int cant);
 void insertBlockchain(Federada* f, Blockchain* b);
 void liberarMemFed(Federada* f);
 
-void alta(Federada*, int idN, int, char*);
-void actualizar(Blockchain*, Nodo*, char*, Federada*);
+void alta(Federada*, int* nro_nodo, int, char*);
+void actualizar(Federada* f, int id_bloc, int id_viejo, char* msj, int* nro_nodo);
 int validar(Federada*);
 int validar_subconjunto(Federada*, int n, int max, int min);
 
