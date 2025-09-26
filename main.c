@@ -1,52 +1,70 @@
-#include "stdlib.h"
-#include "stdio.h"
-#include "assert.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 #include "generador_primos.h"
 #include "blockchain.h"
 
 int main() {
-  /* Genero y muestro los primeros 100 números primos
-  int *p = primos(100);
-  for(int i = 0; i < 100; i++)
-    printf("%d ",p[i]);
+    int nro_nodo = 1;
 
-    Uso los números primos
-  */
+    /* Crear federada con 3 blockchains */
+    Blockchain *bc_1 = crear_b();
+    Blockchain *bc_2 = crear_b();
+    Blockchain *bc_3 = crear_b();
 
-  int nro_nodo = 1;
+    Federada *fede = crear_f(3);
+    insertBlockchain(fede, bc_1);
+    insertBlockchain(fede, bc_2);
+    insertBlockchain(fede, bc_3);
 
-  Blockchain *bc_1 = crear_b();
-  Blockchain *bc_2 = crear_b();
-  Blockchain *bc_3 = crear_b();
+    alta(fede, &nro_nodo, 0, "hola");
+    alta(fede, &nro_nodo, 1, "chau");
+    alta(fede, &nro_nodo, 2, "que");
 
-  Federada *fede = crear_f(3);
+    //valido después de agregar nodos con alta
+    assert(validar(fede) == 1);
 
-  insertBlockchain(fede, bc_1);
-  insertBlockchain(fede, bc_2);
-  insertBlockchain(fede, bc_3);
 
-  char msj1[4] = "hola", msj2[4] = "chau", msj3[3] = "que", msj4[2] = "so";
+    int id_viejo = bc_2->primerN->id;
+    actualizar(fede, 1, id_viejo, "so", &nro_nodo);
+    assert(validar(fede) == 1);
 
-  alta(fede, &nro_nodo, 0, msj1);
-  alta(fede, &nro_nodo, 1, msj2);
-  alta(fede, &nro_nodo, 2, msj3);
 
-  assert(validar(fede) == 1);
+    int esperado = fede->hojas[0] * fede->hojas[1];
+    assert(validar_subconjunto(fede, esperado, 0, 1) == 1);
+    assert(validar_subconjunto(fede, 123456, 0, 1) == 0);
 
-  actualizar(fede, 1, bc_2->primerN->id, msj4, &nro_nodo);
 
-  assert(strcmp(bc_2->primerN->mensaje, "so") == 0);
-  assert(validar(fede) == 1);
 
-  int esperado = fede->hojas[0] * fede->hojas[1];
-  assert(validar_subconjunto(fede, esperado, 0, 1) == 1);
-  assert(validar_subconjunto(fede, 99999, 0, 1) == 0);
+    // alta fuera de rango
+    alta(fede, &nro_nodo, -1, "fuera");
+    alta(fede, &nro_nodo, 99, "fuera");
+    assert(validar(fede) == 1);
 
-  printf("El arbol se corresponde con el producto de los ids? %i", validar(fede));
+    //actualizar blockchain inexistente
+    actualizar(fede, -1, 1, "no existe", &nro_nodo);
+    actualizar(fede, 99, 1, "no existe", &nro_nodo);
+    assert(validar(fede) == 1);
 
-  printf("\nEl producto de los ids de los subconjuntos da el valor esperado? %i\n", validar_subconjunto(fede, 14, 0, 1));
+    //fuera de rango
+    assert(validar_subconjunto(fede, 0, -1, 1) == 0);
+    assert(validar_subconjunto(fede, 0, 1, 99) == 0);
+    assert(validar_subconjunto(fede, 0, 2, 0) == 0);
 
-  // IMPORTANTE: libero la memoria pedida para el arreglo de números primos
-  //free(p);
-  return 0;
+    // federada vacia 
+    Federada *fede_vacia = crear_f(0);
+    assert(validar(fede_vacia) == 1); /* debe considerarse válida */
+    liberarMemFed(fede_vacia);
+
+    //blockchain vacia 
+    Blockchain *b_vacia = crear_b();
+    Federada *fede2 = crear_f(1);
+    insertBlockchain(fede2, b_vacia);
+    assert(validar(fede2) == 0); /* sin nodos no puede validar producto */
+    liberarMemFed(fede2);
+
+    printf("Todos los tests pasaron correctamente\n");
+
+    liberarMemFed(fede);
+    return 0;
 }
