@@ -16,7 +16,6 @@ typedef struct Nodo {
 typedef struct Blockchain {
     Nodo* primerN;
     Nodo* ultimoN;
-    struct Blockchain* sig;
 } Blockchain;
 
 typedef struct Federada {
