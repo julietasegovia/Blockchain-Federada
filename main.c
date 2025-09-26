@@ -7,7 +7,6 @@
 int main() {
     int nro_nodo = 1;
 
-    /* Crear federada con 3 blockchains */
     Blockchain *bc_1 = crear_b();
     Blockchain *bc_2 = crear_b();
     Blockchain *bc_3 = crear_b();
@@ -44,6 +43,13 @@ int main() {
     assert(validar_subconjunto(fede, 0, -1, 1) == 0);
     assert(validar_subconjunto(fede, 0, 1, 99) == 0);
     assert(validar_subconjunto(fede, 0, 2, 0) == 0);
+
+    //blockchain vacia 
+    Blockchain *b_vacia = crear_b();
+    Federada *fede2 = crear_f(1);
+    insertBlockchain(fede2, b_vacia);
+    assert(validar(fede2) == 0);
+    liberarMemFed(fede2);
     
     printf("El arbol se corresponde con el producto de los ids? %i\n", validar(fede));
     printf("El producto de los ids de los subconjuntos da el valor esperado? %i\n", validar_subconjunto(fede, 14, 0, 1));
