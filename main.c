@@ -31,17 +31,17 @@ int main() {
 
     int esperado = fede->hojas[0] * fede->hojas[1];
     assert(validar_subconjunto(fede, esperado, 0, 1) == 1);
-    assert(validar_subconjunto(fede, 123456, 0, 1) == 0);
+    assert(validar_subconjunto(fede, 717372, 0, 1) == 0);
 
 
     // alta fuera de rango
     alta(fede, &nro_nodo, -1, "fuera");
-    alta(fede, &nro_nodo, 99, "fuera");
+    alta(fede, &nro_nodo, 48, "fuera");
     assert(validar(fede) == 1);
    
     //maximos y minimos fuera de rango
     assert(validar_subconjunto(fede, 0, -1, 1) == 0);
-    assert(validar_subconjunto(fede, 0, 1, 99) == 0);
+    assert(validar_subconjunto(fede, 0, 1, 56) == 0);
     assert(validar_subconjunto(fede, 0, 2, 0) == 0);
 
     //blockchain vacia 
