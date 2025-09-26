@@ -1,5 +1,6 @@
 #include "stdlib.h"
 #include "stdio.h"
+#include "assert.h"
 #include "generador_primos.h"
 #include "blockchain.h"
 
@@ -30,7 +31,16 @@ int main() {
   alta(fede, &nro_nodo, 1, msj2);
   alta(fede, &nro_nodo, 2, msj3);
 
-  actualizar(fede, 1, 3, msj4, &nro_nodo);
+  assert(validar(fede) == 1);
+
+  actualizar(fede, 1, bc_2->primerN->id, msj4, &nro_nodo);
+
+  assert(strcmp(bc_2->primerN->mensaje, "so") == 0);
+  assert(validar(fede) == 1);
+
+  int esperado = fede->hojas[0] * fede->hojas[1];
+  assert(validar_subconjunto(fede, esperado, 0, 1) == 1);
+  assert(validar_subconjunto(fede, 99999, 0, 1) == 0);
 
   printf("El arbol se corresponde con el producto de los ids? %i", validar(fede));
 
