@@ -34,6 +34,13 @@ int main() {
     assert(validar_subconjunto(fede, esperado, 0, 1) == 1);
     assert(validar_subconjunto(fede, 123456, 0, 1) == 0);
 
+
+    // alta fuera de rango
+    alta(fede, &nro_nodo, -1, "fuera");
+    alta(fede, &nro_nodo, 99, "fuera");
+    assert(validar(fede) == 1);
+
+    
     printf("El arbol se corresponde con el producto de los ids? %i\n", validar(fede));
     printf("El producto de los ids de los subconjuntos da el valor esperado? %i\n", validar_subconjunto(fede, 14, 0, 1));
     printf("Todos los tests pasaron correctamente\n");
