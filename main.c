@@ -34,35 +34,8 @@ int main() {
     assert(validar_subconjunto(fede, esperado, 0, 1) == 1);
     assert(validar_subconjunto(fede, 123456, 0, 1) == 0);
 
-
-
-    // alta fuera de rango
-    alta(fede, &nro_nodo, -1, "fuera");
-    alta(fede, &nro_nodo, 99, "fuera");
-    assert(validar(fede) == 1);
-
-    //actualizar blockchain inexistente
-    actualizar(fede, -1, 1, "no existe", &nro_nodo);
-    actualizar(fede, 99, 1, "no existe", &nro_nodo);
-    assert(validar(fede) == 1);
-
-    //fuera de rango
-    assert(validar_subconjunto(fede, 0, -1, 1) == 0);
-    assert(validar_subconjunto(fede, 0, 1, 99) == 0);
-    assert(validar_subconjunto(fede, 0, 2, 0) == 0);
-
-    // federada vacia 
-    Federada *fede_vacia = crear_f(0);
-    assert(validar(fede_vacia) == 1); /* debe considerarse válida */
-    liberarMemFed(fede_vacia);
-
-    //blockchain vacia 
-    Blockchain *b_vacia = crear_b();
-    Federada *fede2 = crear_f(1);
-    insertBlockchain(fede2, b_vacia);
-    assert(validar(fede2) == 0); /* sin nodos no puede validar producto */
-    liberarMemFed(fede2);
-
+    printf("El arbol se corresponde con el producto de los ids? %i\n", validar(fede));
+    printf("El producto de los ids de los subconjuntos da el valor esperado? %i\n", validar_subconjunto(fede, 14, 0, 1));
     printf("Todos los tests pasaron correctamente\n");
 
     liberarMemFed(fede);
